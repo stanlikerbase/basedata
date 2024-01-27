@@ -7,7 +7,7 @@ import checkAuth from './utils/checkAuth.js'
 
 mongoose
 	.connect(
-		'mongodb+srv://admin:WWWWWW@cluster0.42pyzjx.mongodb.net/mern?retryWrites=true&w=majority'
+		process.env.MONGO_DB_URL
 	)
 	.then(() => {
 		console.log('DB ok')
