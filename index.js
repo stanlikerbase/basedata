@@ -1,23 +1,25 @@
+import cors from 'cors'
 import express from 'express'
 import mongoose from 'mongoose'
-import { loginValidation, registerValidation } from './validations.js'
-
 import * as UserController from './controllers/UserController.js'
 import checkAuth from './utils/checkAuth.js'
+import { loginValidation, registerValidation } from './validations.js'
 
+const mongoURL =
+	'mongodb+srv://admin:a1b2c3@admin.cxgupo5.mongodb.net/data?retryWrites=true&w=majority'
 mongoose
 	.connect(
-		process.env.MONGO_DB_URL
+		'mongodb+srv://admin:a1b2c3@admin.cxgupo5.mongodb.net/datab?retryWrites=true&w=majority'
 	)
 	.then(() => {
-		console.log('DB ok')
+		process.env.MONGO_DB_URL
 	})
 	.catch(err => {
 		console.log('BD Error ', err)
 	})
 
 const app = express()
-
+app.use(cors())
 app.use(express.json())
 
 app.post('/auth/login', loginValidation, UserController.login)
