@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
+import Session from '../models/Session.js'
 import UserModel from '../models/User.js'
 
 export const register = async (req, res) => {
@@ -24,15 +25,7 @@ export const register = async (req, res) => {
 
 		const user = await doc.save()
 
-		const token = jwt.sign(
-			{
-				_id: user._id,
-			},
-			'secretTextForJWT',
-			{
-				expiresIn: '30d',
-			}
-		)
+		const token = generateToken(user._id)
 
 		const { passwordHash, ...userData } = user._doc
 
@@ -50,70 +43,73 @@ export const login = async (req, res) => {
 		const user = await UserModel.findOne({ email: req.body.email })
 
 		if (!user) {
-			return req.status(400).json({
-				message: 'Неверный логин или пароль',
-			})
+			return res.status(400).json({ message: 'Неверный логин или пароль' })
 		}
 
 		const isValidPass = await bcrypt.compare(
 			req.body.password,
-			user._doc.passwordHash
+			user.passwordHash
 		)
 
 		if (!isValidPass) {
-			return res.status(400).json({
-				message: 'Неверный логин или пароль',
-			})
+			return res.status(400).json({ message: 'Неверный логин или пароль' })
 		}
 
-		const connectionCount = await incrementConnectionCount(user._id)
-		const maxConnections = user.maxConnections
+		// Получаем количество активных сессий для пользователя
+		const sessions = await Session.find({ userId: user._id })
 
-		if (connectionCount > maxConnections) {
-			await decrementConnectionCount(user._id)
-			return res
-				.status(403)
-				.json({ message: 'Превышено максимальное количество авторизаций' })
+		// Устанавливаем лимит сессий
+		const MAX_SESSIONS = user.maxConnections
+
+		// Если сессий больше или равно лимиту, удаляем самую старую
+		if (sessions.length >= MAX_SESSIONS) {
+			// Сортируем сессии по дате создания и удаляем самую старую
+			const oldestSession = sessions.sort(
+				(a, b) => a.createdAt - b.createdAt
+			)[0]
+			await Session.findByIdAndDelete(oldestSession._id)
 		}
 
-		const token = jwt.sign(
-			{
-				_id: user._id,
-			},
-			'secretTextForJWT',
-			{
-				expiresIn: '30d',
-			}
-		)
-		const { passwordHash, ...userData } = user._doc
-
-		res.json({ ...userData, token })
-	} catch (error) {
-		console.log('error', error)
-		res.status(500).json({
-			message: 'Не удалось авторизоваться',
+		// Создаем новую сессию
+		const newSession = new Session({
+			userId: user._id,
+			token: generateToken(user._id),
 		})
+		await newSession.save()
+
+		res.json({ token: newSession.token })
+	} catch (error) {
+		console.error('Login error:', error)
+		res.status(500).json({ message: 'Не удалось авторизоваться' })
 	}
 }
 
 export const logout = async (req, res) => {
 	try {
-		const userId = req.userId
-		const user = await UserModel.findById(userId)
-		if (user.connections <= 0) {
-			return res.json({
-				success: true,
-				message: 'Ну хватит запросы уже отправлять, я это предусмотрел',
+		const token = req.headers.authorization?.split(' ')[1]
+
+		if (!token) {
+			return res.status(401).json({
+				success: false,
+				message: 'Токен не предоставлен',
 			})
 		}
-		await decrementConnectionCount(user._id)
+
+		const sessionDeletionResult = await Session.deleteOne({ token })
+		if (sessionDeletionResult.deletedCount === 0) {
+			return res.status(404).json({
+				success: false,
+				message: 'Сессия не найдена или уже была удалена',
+			})
+		}
+		await decrementConnectionCount(req.userId)
 
 		res.json({
 			success: true,
-			message: 'Вы успешно вышли',
+			message: 'Вы успешно вышли из системы',
 		})
 	} catch (error) {
-		console.error(error)
+		console.error('Ошибка при выходе:', error)
 		res.status(500).json({
 			success: false,
 			message: 'Произошла ошибка при выходе',
@@ -308,4 +304,13 @@ export async function decrementConnectionCount(userId) {
 	)
 
 	return user.connections
+}
+
+function generateToken(userId) {
+	const secretKey = 'secretTextForJWT'
+	const token = jwt.sign({ _id: userId }, secretKey, {
+		expiresIn: '7d',
+	})
+
+	return token
 }
