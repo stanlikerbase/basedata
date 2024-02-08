@@ -7,8 +7,7 @@ import { loginValidation, registerValidation } from './validations.js'
 
 mongoose
 	.connect(
-		'mongodb+srv://admin:a1b2c3@admin.cxgupo5.mongodb.net/datab?retryWrites=true&w=majority'
-		// process.env.MONGO_DB_URL
+		process.env.MONGO_DB_URL
 	)
 	.then(() => {
 		console.log('DB ok')
