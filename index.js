@@ -7,7 +7,8 @@ import { loginValidation, registerValidation } from './validations.js'
 
 mongoose
 	.connect(
-		process.env.MONGO_DB_URL
+		'mongodb+srv://admin:a1b2c3@admin.cxgupo5.mongodb.net/datab?retryWrites=true&w=majority'
+		// process.env.MONGO_DB_URL
 	)
 	.then(() => {
 		console.log('DB ok')
@@ -22,6 +23,11 @@ app.use(express.json())
 
 app.post('/auth/login', loginValidation, UserController.login)
 app.get('/auth/logout', checkAuth, UserController.logout)
+app.get(
+	'/delete-all-sessions',
+	checkAuth,
+	UserController.deleteAllUserSessionsByEmail
+)
 app.post('/auth/register', registerValidation, UserController.register)
 
 app.get('/auth/me', checkAuth, UserController.getMe)

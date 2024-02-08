@@ -286,6 +286,38 @@ export const deleteUserSetting = async (req, res) => {
 	}
 }
 
+export const deleteAllUserSessionsByEmail = async (req, res) => {
+	const { email } = req.body // Получаем email из тела запроса
+
+	try {
+		// Находим пользователя по email
+		const user = await UserModel.findOne({ email: email })
+
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				message: 'Пользователь не найден.',
+			})
+		}
+
+		// Удаляем все сессии, связанные с найденным userId
+		const result = await Session.deleteMany({ userId: user._id })
+
+		// Отправляем ответ об успешном удалении
+		res.json({
+			success: true,
+			message: `Все сессии пользователя с email ${email} удалены. Количество удаленных сессий: ${result.deletedCount}.`,
+		})
+	} catch (error) {
+		console.error('Ошибка при удалении сессий пользователя:', error)
+		res.status(500).json({
+			success: false,
+			message: 'Произошла ошибка при удалении сессий пользователя.',
+			error: error.toString(),
+		})
+	}
+}
+
 export async function incrementConnectionCount(userId) {
 	const user = await UserModel.findByIdAndUpdate(
 		userId,
