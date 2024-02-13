@@ -76,7 +76,7 @@ export const login = async (req, res) => {
 			token: generateToken(user._id),
 		})
 		await newSession.save()
-
+		await incrementConnectionCount(user._id)
 		res.json({ token: newSession.token })
 	} catch (error) {
 		console.error('Login error:', error)
