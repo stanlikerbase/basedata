@@ -301,6 +301,7 @@ export const deleteAllUserSessionsByEmail = async (req, res) => {
 		res.json({
 			success: true,
 			sessions: `У пользователя ${email} количество сессий: ${sessions.length}.`,
+			maxConnections: user.maxConnections
 		})
 	} catch (error) {
 		console.error('Ошибка при удалении сессий пользователя:', error)
