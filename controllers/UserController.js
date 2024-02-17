@@ -68,6 +68,7 @@ export const login = async (req, res) => {
 				(a, b) => a.createdAt - b.createdAt
 			)[0]
 			await Session.findByIdAndDelete(oldestSession._id)
+			const sessionDeletionResult = await Session.deleteOne({ oldestSession.token })
 		}
 
 		// Создаем новую сессию
