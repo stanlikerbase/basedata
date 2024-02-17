@@ -291,22 +291,16 @@ export const deleteAllUserSessionsByEmail = async (req, res) => {
 
 	try {
 		// Находим пользователя по email
-		const user = await UserModel.findOne({ email: email })
+		const user = await UserModel.findOne({ email: req.body.email })
 
 		if (!user) {
-			return res.status(404).json({
-				success: false,
-				message: 'Пользователь не найден.',
-			})
+			return res.status(400).json({ message: 'Неверный логин или пароль' })
 		}
-
-		// Удаляем все сессии, связанные с найденным userId
-		const result = await Session.deleteMany({ userId: user._id })
-
-		// Отправляем ответ об успешном удалении
+		// Получаем количество активных сессий для пользователя
+		const sessions = await Session.find({ userId: user._id })
 		res.json({
 			success: true,
-			message: `Все сессии пользователя с email ${email} удалены. Количество удаленных сессий: ${result.deletedCount}.`,
+			sessions: `У пользователя ${email} количество сессий: ${sessions.length}.`,
 		})
 	} catch (error) {
 		console.error('Ошибка при удалении сессий пользователя:', error)
