@@ -67,7 +67,7 @@ export const login = async (req, res) => {
 			const oldestSession = sessions.sort(
 				(a, b) => a.createdAt - b.createdAt
 			)[0]
-			await Session.findByIdAndRemove(oldestSession._id)
+			await Session.findByIdAndDelete(oldestSession._id)
 		}
 
 		// Создаем новую сессию
