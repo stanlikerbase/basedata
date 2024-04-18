@@ -55,6 +55,14 @@ export const login = async (req, res) => {
 			return res.status(400).json({ message: 'Неверный логин или пароль' })
 		}
 
+		// Преобразование даты подписки из строки в объект Date
+		const subscriptionDate = new Date(user.subscribe.split('.').reverse().join('-'));
+
+		// Проверка, не истекла ли дата подписки
+		if (subscriptionDate < new Date()) {
+			return res.status(403).json({ message: 'Срок вашей подписки истек' });
+		}
+
 		// Получаем количество активных сессий для пользователя
 		const sessions = await Session.find({ userId: user._id })
 
@@ -120,6 +128,14 @@ export const logout = async (req, res) => {
 export const getMe = async (req, res) => {
 	try {
 		const user = await UserModel.findById(req.userId)
+
+		// Преобразование даты подписки из строки в объект Date
+		const subscriptionDate = new Date(user.subscribe.split('.').reverse().join('-'));
+
+		// Проверка, не истекла ли дата подписки
+		if (subscriptionDate < new Date()) {
+			return res.status(403).json({ message: 'Срок вашей подписки истек' });
+		}
 
 		if (!user) {
 			return res.status(404).json({
