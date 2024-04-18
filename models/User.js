@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		subscribe: {
+			type: String,
+			required: true,
+		},
 		avatarUrl: String,
 		settings: {
 			type: Schema.Types.Mixed,
