@@ -60,7 +60,7 @@ export const login = async (req, res) => {
 
 		// Проверка, не истекла ли дата подписки
 		if (subscriptionDate < new Date()) {
-			return res.status(403).json({ message: 'Срок вашей подписки истек' });
+			return res.status(403).json({ message: 'Срок вашей подписки истек. Напишите @wudu_z для продления.' });
 		}
 
 		// Получаем количество активных сессий для пользователя
@@ -134,12 +134,14 @@ export const getMe = async (req, res) => {
 
 		// Проверка, не истекла ли дата подписки
 		if (subscriptionDate < new Date()) {
-			return res.status(403).json({ message: 'Срок вашей подписки истек' });
+			return res.status(403).json({ 
+				message: 'Сессия не найдена или истекла. Пожалуйста, войдите заново.',
+			});
 		}
 
 		if (!user) {
 			return res.status(404).json({
-				message: 'Пользователь не найден',
+				message: 'Сессия не найдена или истекла. Пожалуйста, войдите заново.',
 			})
 		}
 
