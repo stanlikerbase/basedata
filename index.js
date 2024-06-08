@@ -23,6 +23,7 @@ app.use(express.json())
 app.post('/auth/login', loginValidation, UserController.login)
 app.post('/auth/change-pass', loginValidation, UserController.changePassword)
 app.get('/auth/logout', checkAuth, UserController.logout)
+app.post('/change-subscribe', changeSubscribe);
 app.get(
 	'/delete-all-sessions',
 	checkAuth,
