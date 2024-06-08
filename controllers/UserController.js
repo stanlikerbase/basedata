@@ -39,6 +39,38 @@ export const register = async (req, res) => {
 	}
 }
 
+export const changeSubscribe = async (req, res) => {
+    try {
+        const { email, newSubscribe } = req.body;
+
+        // Находим пользователя по email
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Пользователь не найден',
+            });
+        }
+
+        // Обновляем поле подписки
+        user.subscribe = newSubscribe;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Подписка успешно изменена',
+            subscribe: user.subscribe,
+        });
+    } catch (error) {
+        console.error('Ошибка при изменении подписки:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при изменении подписки',
+        });
+    }
+};
+
 export const login = async (req, res) => {
 	try {
 		const user = await UserModel.findOne({ email: req.body.email })
