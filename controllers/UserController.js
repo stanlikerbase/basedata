@@ -355,7 +355,7 @@ export async function decrementConnectionCount(userId) {
 function generateToken(userId) {
 	const secretKey = 'secretTextForJWT'
 	const token = jwt.sign({ _id: userId }, secretKey, {
-		expiresIn: '7d',
+		expiresIn: '30d',
 	})
 
 	return token
