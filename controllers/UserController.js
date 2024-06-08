@@ -5,6 +5,27 @@ import jwt from 'jsonwebtoken'
 import Session from '../models/Session.js'
 import UserModel from '../models/User.js'
 
+export const getAllLogins = async (req, res) => {
+    try {
+        // Находим всех пользователей и выбираем только поле email
+        const users = await UserModel.find({}, 'email');
+        
+        // Извлекаем только email адреса из пользователей
+        const logins = users.map(user => user.email);
+
+        res.json({
+            success: true,
+            logins
+        });
+    } catch (error) {
+        console.error('Ошибка при получении логинов:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при получении логинов',
+        });
+    }
+};
+
 export const register = async (req, res) => {
 	try {
 		const errors = validationResult(req)
