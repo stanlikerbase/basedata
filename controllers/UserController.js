@@ -128,11 +128,10 @@ export const logout = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     try {
-        const userId = req.userId; // ID пользователя, обычно берется из токена
-        const { oldPassword, newPassword } = req.body;
+        const { email, oldPassword, newPassword } = req.body;
 
-        // Находим пользователя по ID
-        const user = await UserModel.findById(userId);
+        // Находим пользователя по email
+        const user = await UserModel.findOne({ email });
 
         if (!user) {
             return res.status(404).json({
