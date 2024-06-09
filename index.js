@@ -31,7 +31,7 @@ app.get(
 )
 app.post('/auth/register', registerValidation, UserController.register)
 
-app.get('/auth/user', UserController.getUser)
+app.post('/auth/user', UserController.getUser)
 app.get('/logins', UserController.getAllLogins)
 app.post('/save-settings', checkAuth, UserController.updateUserSetting)
 app.post('/get-settings', checkAuth, UserController.getUserSetting)
