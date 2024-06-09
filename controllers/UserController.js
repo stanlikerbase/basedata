@@ -221,15 +221,6 @@ export const changePassword = async (req, res) => {
             });
         }
 
-        // Проверяем старый пароль
-        const isValidOldPass = await bcrypt.compare(oldPassword, user.passwordHash);
-        if (!isValidOldPass) {
-            return res.status(400).json({
-                success: false,
-                message: 'Старый пароль неверен',
-            });
-        }
-
         // Генерируем хеш нового пароля
         const salt = await bcrypt.genSalt(10);
         const newHash = await bcrypt.hash(newPassword, salt);
