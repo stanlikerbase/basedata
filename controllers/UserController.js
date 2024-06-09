@@ -92,6 +92,34 @@ export const changeSubscribe = async (req, res) => {
     }
 };
 
+export const getUser = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Находим пользователя по email
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Пользователь не найден',
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user,
+        });
+    } catch (error) {
+        console.error('Ошибка при получении пользователя:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при получении пользователя',
+        });
+    }
+};
+
+
 export const login = async (req, res) => {
 	try {
 		const user = await UserModel.findOne({ email: req.body.email })
