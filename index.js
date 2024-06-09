@@ -21,7 +21,7 @@ app.use(cors())
 app.use(express.json())
 
 app.post('/auth/login', loginValidation, UserController.login)
-app.post('/auth/change-pass', loginValidation, UserController.changePassword)
+app.post('/auth/change-pass', UserController.changePassword)
 app.get('/auth/logout', checkAuth, UserController.logout)
 app.post('/auth/change-subscribe', UserController.changeSubscribe);
 app.get(
