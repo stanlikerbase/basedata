@@ -180,7 +180,7 @@ export const logout = async (req, res) => {
 
 		if (!token) {
 			return res.status(401).json({
-				success: false,
+				success: true,
 				message: 'Токен не предоставлен',
 			})
 		}
@@ -188,7 +188,7 @@ export const logout = async (req, res) => {
 		const sessionDeletionResult = await Session.deleteOne({ token })
 		if (sessionDeletionResult.deletedCount === 0) {
 			return res.status(404).json({
-				success: false,
+				success: true,
 				message: 'Сессия не найдена или уже была удалена',
 			})
 		}
