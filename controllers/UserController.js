@@ -45,10 +45,9 @@ export const checkOnTGid = async (req, res) => {
         const user = await UserModel.findOne({ telegramID: { $exists: true, $eq: telegramID } });
 
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Пользователь не найден',
-            });
+            return res.json({
+            success: false
+        });
         }
 
         res.json({
