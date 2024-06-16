@@ -25,6 +25,7 @@ app.post('/auth/change-pass', UserController.changePassword)
 app.get('/auth/logout', UserController.logout)
 app.get('/auth/me', checkAuth, UserController.getMe)
 app.post('/auth/change-subscribe', UserController.changeSubscribe);
+app.post('/auth/addTelegram', UserController.saveTelegramID)
 app.get(
 	'/delete-all-sessions',
 	checkAuth,
