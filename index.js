@@ -38,7 +38,7 @@ app.get('/logins', UserController.getAllLogins)
 app.post('/save-settings', checkAuth, UserController.updateUserSetting)
 app.post('/get-settings', checkAuth, UserController.getUserSetting)
 app.post('/delete-settings', checkAuth, UserController.deleteUserSetting)
-
+app.post('/get-tg-user', UserController.checkOnTGid)
 app.post('/get-count-settings', checkAuth, UserController.deleteAllUserSessionsByEmail)
 
 app.listen(1337, err => {
