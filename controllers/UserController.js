@@ -7,11 +7,14 @@ import UserModel from '../models/User.js'
 
 export const getAllLogins = async (req, res) => {
     try {
-        // Находим всех пользователей и выбираем только поле email
-        const users = await UserModel.find({}, 'email');
-        
-        // Извлекаем только email адреса из пользователей
-        const logins = users.map(user => user.email);
+        // Находим всех пользователей и выбираем только поля email и subscribe
+        const users = await UserModel.find({}, 'email subscribe');
+
+        // Извлекаем email и subscribe из пользователей
+        const logins = users.map(user => ({
+            email: user.email,
+            subscribe: user.subscribe
+        }));
 
         res.json({
             success: true,
