@@ -32,12 +32,22 @@ export const getAllLogins = async (req, res) => {
 export const checkOnTGid = async (req, res) => {
     try {
         const { telegramID } = req.body;
-        const user = await UserModel.findOne({ telegramID });
+
+        // Проверяем, что telegramID задан и не пустой
+        if (!telegramID) {
+            return res.status(400).json({
+                success: false,
+                message: 'Не указан telegramID',
+            });
+        }
+
+        // Ищем пользователя по telegramID только среди тех, у кого это поле существует
+        const user = await UserModel.findOne({ telegramID: { $exists: true, $eq: telegramID } });
 
         if (!user) {
-          return res.status(404).json({
-             	success: false,
-        	message: 'Пользователь не найден',
+            return res.status(404).json({
+                success: false,
+                message: 'Пользователь не найден',
             });
         }
 
