@@ -29,6 +29,31 @@ export const getAllLogins = async (req, res) => {
     }
 };
 
+export const checkOnTGid = async (req, res) => {
+    try {
+        const { telegramID } = req.body;
+        const user = await UserModel.findOne({ telegramID });
+
+        if (!user) {
+          return res.status(404).json({
+             	success: false,
+        	message: 'Пользователь не найден',
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user,
+        });
+    } catch (error) {
+        console.error('Ошибка при получении данных:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при получении данных',
+        });
+    }
+};
+
 export async function saveTelegramID(req, res) {
     try {
 	const { email, telegramID } = req.body;
