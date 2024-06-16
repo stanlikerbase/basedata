@@ -29,6 +29,28 @@ export const getAllLogins = async (req, res) => {
     }
 };
 
+export async function saveTelegramID(req, res) {
+    try {
+	const { email, telegramID } = req.body;
+        const user = await UserModel.findOne({ email });
+
+        if (user) {
+            user.telegramID = telegramID;
+            await user.save();
+            res.json({
+            success: true,
+            message: 'telegramID успешно добавлен',
+            subscribe: user.subscribe,
+        });
+        } else {
+            console.log('Пользователь не найден.');
+        }
+    } catch (error) {
+        console.error('Ошибка при сохранении ID в базу данных:', error);
+        throw error;
+    }
+}
+
 export const register = async (req, res) => {
 	try {
 		const errors = validationResult(req)
