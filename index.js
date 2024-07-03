@@ -41,8 +41,8 @@ app.post('/delete-settings', checkAuth, UserController.deleteUserSetting)
 app.post('/get-tg-user', UserController.checkOnTGid)
 app.post('/get-count-settings', checkAuth, UserController.deleteAllUserSessionsByEmail)
 
-app.delete('/auth/sessions', UserController.deleteAllSessions);
-app.delete('/auth/user-sessions', UserController.deleteAllSessionsForUser);
+// app.delete('/auth/sessions', UserController.deleteAllSessions);
+// app.delete('/auth/user-sessions', UserController.deleteAllSessionsForUser);
 
 app.listen(1337, err => {
 	if (err) {
