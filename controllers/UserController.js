@@ -265,7 +265,7 @@ export const logout = async (req, res) => {
 	} catch (error) {
 		console.error('Ошибка при выходе:', error)
 		res.status(500).json({
-			success: false,
+			success: true,
 			message: 'Произошла ошибка при выходе',
 		})
 	}
@@ -546,13 +546,17 @@ export async function incrementConnectionCount(userId) {
 }
 
 export async function decrementConnectionCount(userId) {
-	const user = await UserModel.findByIdAndUpdate(
-		userId,
-		{ $inc: { connections: -1 } },
-		{ new: true }
-	)
+    const user = await UserModel.findByIdAndUpdate(
+        userId,
+        { $inc: { connections: -1 } },
+        { new: true }
+    );
 
-	return user.connections
+    if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+    }
+
+    return user.connections;
 }
 
 function generateToken(userId) {
