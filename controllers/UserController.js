@@ -183,8 +183,8 @@ export const login = async (req, res) => {
 	try {
 		const user = await UserModel.findOne({ email: req.body.email })
 		const ver = '2.0.19'
-
-		if (req.body.version < ver) {
+		console.log(ver, req.body.version, req.body.version === ver)
+		if (req.body.version === ver) {
 			return res.status(400).json({ message: 'Необходимо обновиться до версии ' + ver })
 		}
 
