@@ -480,6 +480,7 @@ export const deleteUserSetting = async (req, res) => {
 	}
 }
 
+// Функция для сброса всех сессий у всех пользователей
 export const deleteAllSessions = async (req, res) => {
     try {
         // Удаляем все сессии из коллекции Session
@@ -498,6 +499,7 @@ export const deleteAllSessions = async (req, res) => {
     }
 };
 
+// Функция для сброса всех сессий у одного пользователя
 export const deleteAllSessionsForUser = async (req, res) => {
     try {
         const { email } = req.body;
