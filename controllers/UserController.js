@@ -528,7 +528,7 @@ export async function decrementConnectionCount(userId) {
 }
 
 function generateToken(userId) {
-	const secretKey = 'secretTextForJWT'
+	const secretKey = process.env.JWT_SECRET
 	const token = jwt.sign({ _id: userId }, secretKey, {
 		expiresIn: '30d',
 	})
