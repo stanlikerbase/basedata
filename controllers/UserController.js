@@ -256,7 +256,7 @@ export const logout = async (req, res) => {
 				message: 'Сессия не найдена или уже была удалена',
 			})
 		}
-		await decrementConnectionCount(req.userId)
+		// await decrementConnectionCount(req.userId)
 
 		res.json({
 			success: true,
