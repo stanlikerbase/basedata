@@ -480,32 +480,53 @@ export const deleteUserSetting = async (req, res) => {
 	}
 }
 
-export const deleteAllUserSessionsByEmail = async (req, res) => {
-	const { email } = req.body // Получаем email из тела запроса
+export const deleteAllSessions = async (req, res) => {
+    try {
+        // Удаляем все сессии из коллекции Session
+        const result = await Session.deleteMany({});
 
-	try {
-		// Находим пользователя по email
-		const user = await UserModel.findOne({ email: req.body.email })
+        res.status(200).json({
+            success: true,
+            message: `Удалено ${result.deletedCount} сессий`,
+        });
+    } catch (error) {
+        console.error('Ошибка при удалении всех сессий:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при удалении всех сессий',
+        });
+    }
+};
 
-		if (!user) {
-			return res.status(400).json({ message: 'Неверный логин или пароль' })
-		}
-		// Получаем количество активных сессий для пользователя
-		const sessions = await Session.find({ userId: user._id })
-		res.json({
-			success: true,
-			sessions: `У пользователя ${email} количество сессий: ${sessions.length}.`,
-			maxConnections: user.maxConnections
-		})
-	} catch (error) {
-		console.error('Ошибка при удалении сессий пользователя:', error)
-		res.status(500).json({
-			success: false,
-			message: 'Произошла ошибка при удалении сессий пользователя.',
-			error: error.toString(),
-		})
-	}
-}
+export const deleteAllSessionsForUser = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Находим пользователя по email
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Пользователь не найден',
+            });
+        }
+
+        // Удаляем все сессии для данного пользователя
+        const result = await Session.deleteMany({ userId: user._id });
+
+        res.status(200).json({
+            success: true,
+            message: `Удалено ${result.deletedCount} сессий для пользователя ${email}`,
+        });
+    } catch (error) {
+        console.error('Ошибка при удалении сессий для пользователя:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Произошла ошибка при удалении сессий для пользователя',
+        });
+    }
+};
 
 export async function incrementConnectionCount(userId) {
 	const user = await UserModel.findByIdAndUpdate(
