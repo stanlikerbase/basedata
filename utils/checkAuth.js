@@ -6,7 +6,7 @@ export default async (req, res, next) => {
 
 	if (token) {
 		try {
-			const decoded = jwt.verify(token, 'secretTextForJWT')
+			const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
 			// Проверяем, существует ли сессия с данным токеном
 			const session = await Session.findOne({ token })
